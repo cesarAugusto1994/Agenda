@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
 
 import com.coletanea.coletaneaicm.coletaneaicm.modelo.Aluno;
 
@@ -36,16 +37,23 @@ public class ContatoDAO extends SQLiteOpenHelper {
     }
 
     public void insere(Aluno aluno) {
+
         SQLiteDatabase db = getWritableDatabase();
 
+        ContentValues dados = getContentValuesContato(aluno);
+
+        db.insert("contatos", null, dados);
+    }
+
+    @NonNull
+    private ContentValues getContentValuesContato(Aluno aluno) {
         ContentValues dados = new ContentValues();
         dados.put("nome", aluno.getNome());
         dados.put("endereco", aluno.getEndereco());
         dados.put("telefone", aluno.getTelefone());
         dados.put("email", aluno.getEmail());
         dados.put("nota", aluno.getNota());
-
-        db.insert("contatos", null, dados);
+        return dados;
     }
 
     public List<Aluno> getAlunos() {
@@ -82,5 +90,17 @@ public class ContatoDAO extends SQLiteOpenHelper {
 
         db.delete("contatos", "id = ?", params);
 
+    }
+
+    public void altera(Aluno aluno) {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues dados = getContentValuesContato(aluno);
+
+        long id = aluno.getId();
+        String[] params = {String.valueOf(id)};
+
+        db.update("contatos", dados, "id = ?", params);
     }
 }

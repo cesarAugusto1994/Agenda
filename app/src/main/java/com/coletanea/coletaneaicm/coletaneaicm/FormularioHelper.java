@@ -11,11 +11,13 @@ import com.coletanea.coletaneaicm.coletaneaicm.modelo.Aluno;
 
 public class FormularioHelper {
 
-    private EditText nome;
-    private EditText endereco;
-    private EditText telefone;
-    private EditText email;
-    private RatingBar nota;
+    private final EditText nome;
+    private final EditText endereco;
+    private final EditText telefone;
+    private final EditText email;
+    private final RatingBar nota;
+
+    private Aluno aluno;
 
     public FormularioHelper(FormularioActivity activity) {
 
@@ -24,11 +26,12 @@ public class FormularioHelper {
         telefone = (EditText) activity.findViewById(R.id.formulario_telefone);
         email = (EditText) activity.findViewById(R.id.formulario_email);
         nota = (RatingBar) activity.findViewById(R.id.formulario_nota);
+
+        aluno = new Aluno();
     }
 
     public Aluno getContato() {
 
-        Aluno aluno = new Aluno();
         aluno.setNome(nome.getText().toString());
         aluno.setEndereco(endereco.getText().toString());
         aluno.setTelefone(telefone.getText().toString());
@@ -36,6 +39,17 @@ public class FormularioHelper {
         aluno.setNota(Double.valueOf(nota.getProgress()));
 
         return aluno;
+    }
+
+    public void setContato(Aluno aluno) {
+
+        nome.setText(aluno.getNome());
+        endereco.setText(aluno.getEndereco());
+        telefone.setText(aluno.getTelefone());
+        email.setText(aluno.getEmail());
+        nota.setProgress(aluno.getNota().intValue());
+
+        this.aluno = aluno;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.coletanea.coletaneaicm.coletaneaicm;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -27,10 +28,22 @@ public class ListaContatosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_contatos);
 
-        Button novoContato = (Button) findViewById(R.id.novo_contato);
 
         lista_alunos = (ListView) findViewById(R.id.lista_alunos);
 
+        lista_alunos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> lista, View item, int position, long id) {
+                Aluno aluno = (Aluno) lista_alunos.getItemAtPosition(position);
+
+                Intent irParaFormulario = new Intent(ListaContatosActivity.this, FormularioActivity.class);
+                irParaFormulario.putExtra("contato", aluno);
+                startActivity(irParaFormulario);
+
+            }
+        });
+
+        Button novoContato = (Button) findViewById(R.id.novo_contato);
         novoContato.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,14 +57,26 @@ public class ListaContatosActivity extends AppCompatActivity {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenu.ContextMenuInfo menuInfo) {
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        final Aluno aluno = (Aluno) lista_alunos.getItemAtPosition(info.position);
+
+        MenuItem site = menu.add("Visitar Site");
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+
+        String url = aluno.getEmail();
+
+        if (!url.startsWith("http://")) {
+            url = "http://" + url;
+        }
+        intent.setData(Uri.parse(aluno.getEmail()));
+        site.setIntent(intent);
+
+
         MenuItem deletar = menu.add("Deletar");
         deletar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-
-                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-
-                Aluno aluno = (Aluno) lista_alunos.getItemAtPosition(info.position);
 
                 ContatoDAO dao = new ContatoDAO(ListaContatosActivity.this);
                 dao.deleta(aluno);
